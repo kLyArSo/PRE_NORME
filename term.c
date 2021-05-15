@@ -108,6 +108,19 @@ char	*delete_char(char	*str)
 	return (ret);
 }
 
+int		all_sp(char	*str)
+{
+	int i;
+
+	i = 0;
+	while(str[i] != 0 && str[i] == ' ')
+		i++;
+	if (str[i] == 0)
+		return (1);	//if full of white_sp
+	return (0);		//if isnt full of white_sp
+}
+
+
 void            *termcaps(t_format    *formaptr, char        **env)
 {
     int     ascii;
@@ -118,6 +131,7 @@ void            *termcaps(t_format    *formaptr, char        **env)
 	init_lst(ptr);
 	char *check;
 	int ret = tgetent(getenv("TERM"), NULL);
+	int i;
 	write(1, "MY_SHELL~", ft_strlen("MY_SHELL~"));
     while (1)
     {
@@ -140,42 +154,57 @@ void            *termcaps(t_format    *formaptr, char        **env)
 		{
 			if (my_strcmp(str, "") != 0)
 			{
+				i = all_sp(str);
 				if (ptr->next != NULL)
 				{
 					while (ptr->next != NULL)
 						ptr = ptr->next;
 				}
 				ptr->line = str;
-				check = parse(str, formaptr);
-				if (my_strcmp(check, "Unmatched_Quotes") == 0
-				|| my_strcmp(check, "Back_slash_Error") == 0)
+				if (i == 0)//isnt full of wh_sp
 				{
-					write(1,"\n>",2);
-					continue ;
+					check = parse(str, formaptr);
+					if (my_strcmp(check, "Unmatched_Quotes") == 0
+					|| my_strcmp(check, "Back_slash_Error") == 0)
+					{
+						write(1,"\n>",2);
+						continue ;
+					}
+					else if (my_strcmp(check, "Redirection_error") == 0
+        					|| my_strcmp(check, "Parse_error") == 0)
+					{
+						write(1,"\n",1);
+						write(1, check, ft_strlen(check));
+						write(1, "\nMY_SHELL~", ft_strlen("\nMY_SHELL~"));
+						free(str);
+						str = calloc(1,1);
+						ptr->line = str;
+					}
+					else
+					{
+        				ft_execution(env, formaptr);
+						ptr->next = malloc(sizeof(t_history));
+						tmp = ptr;
+						ptr = ptr->next;
+						str = calloc(1,1);
+						init_lst(ptr);
+						ptr->previous = tmp;
+						write(1, "\nMY_SHELL~", ft_strlen("\nMY_SHELL~"));
+					}
 				}
-				else if (my_strcmp(check, "Redirection_error") == 0
-        				|| my_strcmp(check, "Parse_error") == 0)
+				else//is full of wh_sp
 				{
-					write(1,"\n",1);
-					write(1, check, ft_strlen(check));
-					write(1, "\nMY_SHELL~", ft_strlen("\nMY_SHELL~"));
-					free(str);
-					str = calloc(1,1);
-					ptr->line = str;
-				}
-				else
-				{
-        			ft_execution(env, formaptr);
 					ptr->next = malloc(sizeof(t_history));
 					tmp = ptr;
 					ptr = ptr->next;
 					str = calloc(1,1);
 					init_lst(ptr);
 					ptr->previous = tmp;
-					write(1,"\n",1);
-					write(1, "MY_SHELL~", ft_strlen("MY_SHELL~"));
+					write(1, "\nMY_SHELL~", ft_strlen("\nMY_SHELL~"));
 				}
 			}
+			else if(my_strcmp(str, "") == 0)
+				write(1, "\nMY_SHELL~", ft_strlen("\nMY_SHELL~"));
 		}
 		else if (ascii == UP_KEY)
 		{
