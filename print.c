@@ -38,6 +38,7 @@ void    print_pipes(t_pipes *ptr)//DONT NORM IT
         printf("PIPE START\n");
         while(ptr != NULL)
         {
+            printf("\n");
             printf("LINE = %s\n", ptr->line);
             if (ptr->command != NULL)
             printf("CMD = %s\n", ptr->command);
@@ -52,12 +53,13 @@ void    print_pipes(t_pipes *ptr)//DONT NORM IT
 
 void    print_da(t_format    *ptr)//DONT NORM IT
 {
-    while(ptr != NULL)
+    while (ptr != NULL)
     {
         if (ptr->pipes != NULL)
             print_pipes(ptr->pipes);
         else if (ptr->pipes == NULL)
         {
+            printf("\n");
             printf("LINE = %s\n", ptr->pre_pipe_line);
             printf("CMD = %s\n", ptr->command);
             print_args(ptr->arguments);

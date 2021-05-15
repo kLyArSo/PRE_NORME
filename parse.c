@@ -35,13 +35,19 @@ t_linedata      *split_id(char   *input)
 
 char     *parse(char *input, t_format    *ptr)
 {
+    char *str;
     if (ptr == NULL)
         return (NULL);
-    write(1,"$",1);
     if (input == NULL)
         return (NULL);
-    if(my_strcmp(input, "") == 0 || error_check(input) == NULL)
+    if(strcmp(input, "") == 0)
         return (NULL);
+    str = error_check(input);
+    if (my_strcmp(str, "Unmatched_Quotes") == 0
+        ||my_strcmp(str, "Redirection_error") == 0
+        || my_strcmp(str, "Parse_error") == 0
+        || my_strcmp(str, "Back_slash_Error") == 0)
+    return (str);
     input = last_check(input);
     if (input == NULL)
         return (NULL);

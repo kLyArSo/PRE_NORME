@@ -32,28 +32,25 @@ int     da_loop(char    *input, int i)
     return (i);
 }
 
-int     tri(char    *input, int i)
+int     tri(char    *input, int i, char **str)
 {
     if (ft_test_char("\'\"",input[i]) == 1)
     {
         i = quotes_err(input, i);
         if (i == -1)
-            write(1,"Unmatched Quotes\n",
-            ft_strlen("Unmatched Quotes\n"));
+            *str = ft_strdupe("Unmatched_Quotes");
     }
     else if (ft_test_char("|;",input[i]) == 1)
     {
         i = parse_error_check(input, i);
         if (i == -1)
-            write(1,"Parse_error\n",
-            ft_strlen("Parse_error\n"));
+            *str = ft_strdupe("Parse_error");
     }
     else if (ft_test_char("<>",input[i]) == 1)
     {
         i = redirection_error_check(input, i);
         if (i == -1)
-            write(1,"Redirection_error\n",
-            ft_strlen("Redirection_error\n"));
+            *str = ft_strdupe("Redirection_error");
     }
     return (i);
 }
@@ -63,19 +60,25 @@ char        *error_check(char    *input)
     int     i;
 
     i = 0;
+    char *str;
     while (input[i] != 0)
     {
         i = da_loop(input, i);
         if (ft_test_char("\'\"|;<>",input[i]) == 1)
         {
-            i = tri(input, i);
+            i = tri(input, i, &str);
             if (i == -1)
-                return(NULL);
+            {
+                if (my_strcmp(str, "Unmatched_Quotes") == 0
+                ||my_strcmp(str, "Redirection_error") == 0
+                || my_strcmp(str, "Parse_error") == 0)
+                    return (str);
+            }
         }
         else if (input[i] == '\\')
         {
             if (input[i + 1] == 0)
-                return (ft_error("Back_slash Error\n"));
+                return (ft_strdupe("Back_slash_Error"));
         }
         if (input[i] != 0)
             i++;

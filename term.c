@@ -108,13 +108,6 @@ char	*delete_char(char	*str)
 	return (ret);
 }
 
-t_history	*update_location(t_history	*ptr)
-{
-	while(ptr->next != NULL)
-		ptr = ptr->next;
-	return (ptr);
-}
-
 void            *termcaps(t_format    *formaptr, char        **env)
 {
     int     ascii;
@@ -123,6 +116,7 @@ void            *termcaps(t_format    *formaptr, char        **env)
 	t_history 	*tmp;
 	char	*str = calloc(1,1);
 	init_lst(ptr);
+	char *check;
 	int ret = tgetent(getenv("TERM"), NULL);
 	write(1, "MY_SHELL~", ft_strlen("MY_SHELL~"));
     while (1)
@@ -144,46 +138,49 @@ void            *termcaps(t_format    *formaptr, char        **env)
 		}
 		else if (ascii == ENTER_KEY)//enter
 		{
-			write(1,"\n",1);
-			write(1, "MY_SHELL~", ft_strlen("MY_SHELL~"));
-			if (ptr->next == NULL)
+			if (my_strcmp(str, "") != 0)
 			{
+				if (ptr->next != NULL)
+				{
+					while (ptr->next != NULL)
+						ptr = ptr->next;
+				}
 				ptr->line = str;
-				if (parse(str, formaptr) == NULL)
-					return(NULL);
-        		ft_execution(env, formaptr);
-        		print_da(formaptr);	//---------------------------------//COMMENT IF U DONT WANT TO PRINT
-				write(1, "MY_SHELL~", ft_strlen("MY_SHELL~"));
-				ptr->next = malloc(sizeof(t_history));
-				tmp = ptr;
-				ptr = ptr->next;
-				str = calloc(1,1);
-				init_lst(ptr);
-				ptr->previous = tmp;
-			}
-			else if (ptr->next != NULL)
-			{
-				while (ptr->next != NULL)
+				check = parse(str, formaptr);
+				if (my_strcmp(check, "Unmatched_Quotes") == 0
+				|| my_strcmp(check, "Back_slash_Error") == 0)
+				{
+					write(1,"\n>",2);
+					continue ;
+				}
+				else if (my_strcmp(check, "Redirection_error") == 0
+        				|| my_strcmp(check, "Parse_error") == 0)
+				{
+					write(1,"\n",1);
+					write(1, check, ft_strlen(check));
+					write(1, "\nMY_SHELL~", ft_strlen("\nMY_SHELL~"));
+					free(str);
+					str = calloc(1,1);
+					ptr->line = str;
+				}
+				else
+				{
+        			ft_execution(env, formaptr);
+					ptr->next = malloc(sizeof(t_history));
+					tmp = ptr;
 					ptr = ptr->next;
-				ptr->line = str;
-				if (parse(str, formaptr) == NULL)
-					return(NULL);
-        		ft_execution(env, formaptr);
-        		print_da(formaptr);//if you want to print the output
-				write(1, "MY_SHELL~", ft_strlen("MY_SHELL~"));
-				ptr->next = malloc(sizeof(t_history));
-				tmp = ptr;
-				ptr = ptr->next;
-				str = calloc(1,1);
-				init_lst(ptr);
-				ptr->previous = tmp;
+					str = calloc(1,1);
+					init_lst(ptr);
+					ptr->previous = tmp;
+					write(1,"\n",1);
+					write(1, "MY_SHELL~", ft_strlen("MY_SHELL~"));
+				}
 			}
 		}
 		else if (ascii == UP_KEY)
 		{
 			tputs(tgoto(tgetstr("ch", NULL), 0, 0), 1, put_char);
 			tputs(tgetstr("dl",NULL), 1, put_char);
-
 			write(1, "MY_SHELL~", ft_strlen("MY_SHELL~"));
 			if (ptr->previous != NULL)
 				ptr = ptr->previous;
