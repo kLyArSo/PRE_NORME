@@ -28,15 +28,13 @@ char    *j_oin(char *s, char c)
 	s = NULL;
 	return (ret);
 }
-int     fetch_char()
+int     fetch_char(struct termios *old, int i)
 {
 	char    c;
 	int		summ;
-	struct termios old;
 	struct	termios term; //, init; //init made to reset to default
 	
-	tcgetattr(0, &old); //get terminal attributes and store them in in the struct
-	term = old;
+	tcgetattr(0, &term); //get terminal attributes and store them in in the struct
 	term.c_lflag &= ~(ICANON|ECHO); //Set to Non Canonical, Reads instantly without waiting for "ENTER" key, Maximum length is 4096
 	term.c_cc[VMIN] = 1;  // VMIN   Minimum number of characters for noncanonical read (MIN).
 	term.c_cc[VTIME] = 0;  //VTIME Timeout in deciseconds for noncanonical read (TIME).
@@ -53,7 +51,7 @@ int     fetch_char()
 		read(0, &c, 1);
 		summ = summ + c;
 	}
-	tcsetattr(0, TCSANOW, &old);
+	tcsetattr(0, TCSANOW, old);
 	return (summ);
 }
 
@@ -74,13 +72,6 @@ char	*ft_strdupe(char	*str)
 		i++;
 	}
 	return(ret);
-}
-
-void		init_lst(t_history	*ptr)
-{
-	ptr->previous = NULL;
-	ptr->next = NULL;
-	ptr->line = calloc(1,1);
 }
 
 int put_char(int c)
@@ -118,122 +109,4 @@ int		all_sp(char	*str)
 	if (str[i] == 0)
 		return (1);	//if full of white_sp
 	return (0);		//if isnt full of white_sp
-}
-
-
-void            *termcaps(t_format    *formaptr, char        **env)
-{
-    int     ascii;
-	t_history	*head = malloc(sizeof(t_history));
-	t_history	*ptr = head;
-	t_history 	*tmp;
-	char	*str = calloc(1,1);
-	init_lst(ptr);
-	char *check;
-	int ret = tgetent(getenv("TERM"), NULL);
-	int i;
-	write(1, "MY_SHELL~", ft_strlen("MY_SHELL~"));
-    while (1)
-    {
-		ascii = fetch_char();
-		if (ascii >= 32 && ascii <= 126)//all printable chars
-		{
-			str = j_oin(str, ascii);
-			write(1, &ascii, 1);
-		}
-		else if (ascii == DELETE_KEY)//delete char
-		{
-			if (ft_strlen(str) > 0)
-			{
-				str = delete_char(str);//deletes last char
-				tputs(tgetstr("le",NULL), 1, put_char);//move cursor left
-				tputs(tgetstr("dc",NULL), 1, put_char);//delete char
-			}
-		}
-		else if (ascii == ENTER_KEY)//enter
-		{
-			if (my_strcmp(str, "") != 0)
-			{
-				i = all_sp(str);
-				if (ptr->next != NULL)
-				{
-					while (ptr->next != NULL)
-						ptr = ptr->next;
-				}
-				ptr->line = str;
-				if (i == 0)//isnt full of wh_sp
-				{
-					check = parse(str, formaptr);
-					if (my_strcmp(check, "Unmatched_Quotes") == 0
-					|| my_strcmp(check, "Back_slash_Error") == 0)
-					{
-						write(1,"\n>",2);
-						continue ;
-					}
-					else if (my_strcmp(check, "Redirection_error") == 0
-        					|| my_strcmp(check, "Parse_error") == 0)
-					{
-						write(1,"\n",1);
-						write(1, check, ft_strlen(check));
-						write(1, "\nMY_SHELL~", ft_strlen("\nMY_SHELL~"));
-						free(str);
-						str = calloc(1,1);
-						ptr->line = str;
-					}
-					else
-					{
-        				ft_execution(env, formaptr);
-						ptr->next = malloc(sizeof(t_history));
-						tmp = ptr;
-						ptr = ptr->next;
-						str = calloc(1,1);
-						init_lst(ptr);
-						ptr->previous = tmp;
-						write(1, "\nMY_SHELL~", ft_strlen("\nMY_SHELL~"));
-					}
-				}
-				else//is full of wh_sp
-				{
-					ptr->next = malloc(sizeof(t_history));
-					tmp = ptr;
-					ptr = ptr->next;
-					str = calloc(1,1);
-					init_lst(ptr);
-					ptr->previous = tmp;
-					write(1, "\nMY_SHELL~", ft_strlen("\nMY_SHELL~"));
-				}
-			}
-			else if(my_strcmp(str, "") == 0)
-				write(1, "\nMY_SHELL~", ft_strlen("\nMY_SHELL~"));
-		}
-		else if (ascii == UP_KEY)
-		{
-			tputs(tgoto(tgetstr("ch", NULL), 0, 0), 1, put_char);
-			tputs(tgetstr("dl",NULL), 1, put_char);
-			write(1, "MY_SHELL~", ft_strlen("MY_SHELL~"));
-			if (ptr->previous != NULL)
-				ptr = ptr->previous;
-			str = ft_strdupe(ptr->line);
-			write(1,str, ft_strlen(str));
-		}
-		else if (ascii == DOWN_KEY)
-		{
-			tputs(tgoto(tgetstr("ch", NULL), 0, 0), 1, put_char);
-			tputs(tgetstr("dl",NULL), 1, put_char);
-			
-			write(1, "MY_SHELL~", ft_strlen("MY_SHELL~"));
-			if (ptr->next != NULL)
-				ptr = ptr->next;
-			str = ft_strdupe(ptr->line);
-			write(1,str, ft_strlen(str));
-
-		}
-		/*if (ascii == CTRL_D)
-		{
-			restore_def_values();
-			write(1, "exit\n", ft_strlen("exit\n"));
-			exit(0);
-		}*/
-    }
-	return("done");
 }

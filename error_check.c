@@ -88,7 +88,7 @@ char        *error_check(char    *input)
 
 int     parse_error_check(char *input, int i)
 {
-    if (i == 0 || (input[i] == '|' && input[i+1] == '\0'))
+    if (input[i] == '|' && (input[i+1] == '\0' || i == 0))//changes made here
         return (-1);
     i++;
     if (ft_test_char(";|", input[i]) == 1)

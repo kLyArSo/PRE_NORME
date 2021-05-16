@@ -170,14 +170,3 @@ char    *dollar_treatment(char  **env, char *slice)
     }
     return (data->slice);
 }
-/*
-int     main(int    argc, char      **argv, char        **env)
-{
-    int i;
-
-    i = 0;
-    char *str = ft_strdup(argv[1]);
-    dollar_treatment(env, str);
-    printf("%s\n", str);
-    return (0);
-}*/

@@ -10,9 +10,6 @@
 # define DOWN_KEY 184
 # define ENTER_KEY 10
 # define DELETE_KEY 127
-//# define KEY_LEFT  186
-//# define KEY_RIGHT 185
-//# define TAB_KEY 9
 # define CTRL_D 4
 
 typedef struct  s_history
@@ -102,61 +99,40 @@ typedef     struct  s_tools
     char    *ret;
 } t_tools;
 
-char            *fetch_input();
-int             my_strcmp(char  *s1, char   *s2);
-char            *my_realloc(char    *str, char  c);
-char            *my_calloc(int length);
-ssize_t         ft_strlen(char  *string);
-char            *error_check(char    *input);
-int             parse_error_check(char *input, int i);
-int             redirection_error_check(char *input, int i);
-int             ft_test_char(char   *str, char c);
-int             is_white_space(char c);
-char            *ft_error(char  *message);
-int             back_slash_presence(char *input, int i);
-char            *ft_substr(char *str, int start, int end);
-int             tri(char    *input, int i, char **str);
-int             quotes_err(char     *input, int i);
-int             da_loop(char    *input, int i);
-int             error_suite(int counter, char   *input, int i, char *str);
-int             skip_quotes(char    *input, int i);
-char            *trim_spaces(char *input);
-void            *semicolon_split(t_format    *ptr, char *input);
-void            printf_individual_lines(t_format    *ptr);
-char            *last_check(char *input);
-int             pipe_presence(char *input);
-void            *fetch_pipes(t_format    *ptr, int start, int i);
-void            *pipe_split(t_format    *ptr);
-void            print_formatted(t_format    *ptr);
-void            print_da(t_format    *ptr);
-void            data_init(t_linedata *data);
-int             skip_irr(char   *input, int i);
-void            data_init0(t_bag *data);
-t_linedata      *pre_red(char   *input, t_bag   *bag, t_linedata *data);
-t_linedata      *red(char   *input, t_bag   *bag, t_linedata *data);
-t_linedata      *w_s(char   *input, t_bag   *bag, t_linedata *data);
-void            eof(char   *input, t_bag   *bag, t_linedata *data);
-t_linedata      *fetch_red(char   *input, t_bag   *bag, t_linedata *data);
-t_linedata      *split_id(char   *input);
-void            free_tpipes_nodes(t_pipes    *ptr);
-void            free_tred_nodes(t_redirections    *ptr);
-void            free_targs_nodes(t_arguments    *ptr);
-void            free_sliced_line_nodes(t_linedata *data);
-void            free_sliced_line_strings(t_linedata *data);
-void            free_tpipes_contents(t_pipes    *ptr);
-void            ft_freedom(t_format *ptr);
-void            free_tformat_nodes(t_format    *ptr);
-void            free_tformat_contents(t_format *ptr);
-void            free_nodes(void *ptr);
-t_redirections    *fetch_redirection(t_linedata *data, t_redirections     *ret, int counter);
-char            *parse(char *input, t_format    *ptr);
-char            *quote_slash(char *slice);
-t_tools         *initialise_box(t_tools     *box, char *slice);
-char            *ft_strjoin(char *s1, char *s2);
-char            *dollar_treatment(char  **env, char *slice);
-void            purge(char        **env, t_format    *ptr);
-void            cleanse_no_pipes(char        **env, t_format    *ptr);
-void            cleanse_yes_pipes(char        **env, t_format    *ptr);
-void            *termcaps(t_format    *formaptr, char        **env);
-void    ft_execution(char        **env, t_format    *ptr);
-char            *ft_strdupe(char *str);
+typedef     struct  s_toolbox
+{
+    t_format        *formaptr;;
+	t_history	    *ptr;
+	t_history 	    *tmp;
+    int             ascii;
+	char	        *str;
+	struct termios  old;
+	int             i;
+	char            *check;
+}   t_toolbox;
+
+//--------dollar_treatment.c---------//
+int     test_c(char c)
+ssize_t     find_valid_dollar(char *slice)
+char    *fetch_var_name(char *slice, int i)
+char    *var_replacement(t_var_rep *data)
+ssize_t     equal_sign(char     *str)
+t_env       *fetch_all_variables(char **env)
+char    *ft_strdup(char     *str)
+char    *fetch_wanted_var(char    *name, t_env   *ptr)
+void    print_k(t_env   *ptr)
+char    *fetch_variable_content(char **env, char    *name)
+char    *dollar_treatment(char  **env, char *slice)
+//--------dollar_treatment.c---------//
+
+//------------error_check.c----------//
+int     quotes_err(char     *input, int i);
+int     da_loop(char    *input, int i);
+int     tri(char    *input, int i, char **str);
+char        *error_check(char    *input);
+int     parse_error_check(char *input, int i);
+int     redirection_error_check(char *input, int i);
+int     error_suite(int counter, char   *input, int i, char *str);
+//------------error_check.c----------//
+
+
