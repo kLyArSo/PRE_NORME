@@ -128,7 +128,7 @@ void    *full_ws_niet(t_toolbox   *box, char    **env)
         return (NULL);
 	}
 	else if (my_strcmp(box->check, "Redirection_error") == 0
-			|| my_strcmp(box->check, "Parse_error") == 0)
+			|| my_strcmp(box->check, "Syntax_error") == 0)
 	{
         put_strings("\n",box->check,"\nMY_SHELL~",NULL);
 		free(box->str);

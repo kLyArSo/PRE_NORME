@@ -28,7 +28,7 @@ char    *j_oin(char *s, char c)
 	s = NULL;
 	return (ret);
 }
-int     fetch_char(struct termios *old, int i)
+int     fetch_char(struct termios *old)
 {
 	char    c;
 	int		summ;

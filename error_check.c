@@ -32,29 +32,6 @@ int     da_loop(char    *input, int i)
     return (i);
 }
 
-int     tri(char    *input, int i, char **str)
-{
-    if (ft_test_char("\'\"",input[i]) == 1)
-    {
-        i = quotes_err(input, i);
-        if (i == -1)
-            *str = ft_strdupe("Unmatched_Quotes");
-    }
-    else if (ft_test_char("|;",input[i]) == 1)
-    {
-        i = parse_error_check(input, i);
-        if (i == -1)
-            *str = ft_strdupe("Parse_error");
-    }
-    else if (ft_test_char("<>",input[i]) == 1)
-    {
-        i = redirection_error_check(input, i);
-        if (i == -1)
-            *str = ft_strdupe("Redirection_error");
-    }
-    return (i);
-}
-
 char        *error_check(char    *input)
 {
     int     i;
@@ -71,7 +48,7 @@ char        *error_check(char    *input)
             {
                 if (my_strcmp(str, "Unmatched_Quotes") == 0
                 ||my_strcmp(str, "Redirection_error") == 0
-                || my_strcmp(str, "Parse_error") == 0)
+                || my_strcmp(str, "Syntax_error") == 0)
                     return (str);
             }
         }
@@ -86,9 +63,32 @@ char        *error_check(char    *input)
     return ("done");
 }
 
+int     tri(char    *input, int i, char **str)
+{
+    if (ft_test_char("\'\"",input[i]) == 1)
+    {
+        i = quotes_err(input, i);
+        if (i == -1)
+            *str = ft_strdupe("Unmatched_Quotes");
+    }
+    else if (ft_test_char("|;",input[i]) == 1)
+    {
+        i = parse_error_check(input, i);
+        if (i == -1)
+            *str = ft_strdupe("Syntax_error");
+    }
+    else if (ft_test_char("<>",input[i]) == 1)
+    {
+        i = redirection_error_check(input, i);
+        if (i == -1)
+            *str = ft_strdupe("Redirection_error");
+    }
+    return (i);
+}
+
 int     parse_error_check(char *input, int i)
 {
-    if (input[i] == '|' && (input[i+1] == '\0' || i == 0))//changes made here
+     if (i == 0 || (input[i] == '|' && input[i+1] == '\0'))
         return (-1);
     i++;
     if (ft_test_char(";|", input[i]) == 1)

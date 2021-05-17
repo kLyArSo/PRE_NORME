@@ -45,9 +45,9 @@ char     *parse(char *input, t_format    *ptr)
     str = error_check(input);
     if (my_strcmp(str, "Unmatched_Quotes") == 0
         ||my_strcmp(str, "Redirection_error") == 0
-        || my_strcmp(str, "Parse_error") == 0
+        || my_strcmp(str, "Syntax_error") == 0
         || my_strcmp(str, "Back_slash_Error") == 0)
-    return (str);
+        return (str);
     input = last_check(input);
     if (input == NULL)
         return (NULL);
