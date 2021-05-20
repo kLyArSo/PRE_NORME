@@ -90,7 +90,6 @@ typedef struct  s_format
 typedef     struct  s_var_rep
 {
     int     dollar_position;
-    char    *slice;
     char    *variable_content;
     char    *variable_name;
 } t_var_rep;
@@ -122,7 +121,7 @@ typedef     struct  s_toolbox
 int                 test_c(char c);
 ssize_t             find_valid_dollar(char *slice);
 char                *fetch_var_name(char *slice, int i);
-char                *var_replacement(t_var_rep *data);
+char                *var_replacement(t_var_rep *data, char  *slice);
 ssize_t             equal_sign(char     *str);
 t_env               *fetch_all_variables(char **env);
 char                *ft_strdup(char     *str);
@@ -247,3 +246,11 @@ char                *ft_substr(char *str, int start, int end);
 char                *ft_error(char *str);
 char                *ft_strjoin(char *s1, char *s2);
 //------------------utils.c--------------//
+
+//---------------------ft_itoa.c----------//
+char				*ft_itoa(int n);
+static	char		*ft_print_pos(int nb, char *s, int j);
+static	char		*ft_printneg(unsigned int nb, char *s, int k);
+static	int			ft_counter(int n);
+static	int			check_neg(int n);
+//---------------------ft_itoa.c----------//
