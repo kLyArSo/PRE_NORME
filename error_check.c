@@ -75,13 +75,19 @@ int     tri(char    *input, int i, char **str)
     {
         i = parse_error_check(input, i);
         if (i == -1)
+        {
             *str = ft_strdupe("Syntax_error");
+            g_global.ret = 258;
+        }
     }
     else if (ft_test_char("<>",input[i]) == 1)
     {
         i = redirection_error_check(input, i);
         if (i == -1)
+        {
             *str = ft_strdupe("Redirection_error");
+            g_global.ret = 258;
+        }
     }
     return (i);
 }

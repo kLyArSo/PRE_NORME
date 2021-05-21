@@ -111,10 +111,16 @@ t_env       *fetch_all_variables(char **env)
     while (env[i] != NULL)
     {
         equ = equal_sign(env[i]);
-        if (equ == -1)
-            break ;
-        ptr->var_name = ft_substr(env[i], 0, equ - 1);
-        ptr->var_content = ft_substr(env[i], equ + 1, ft_strlen(env[i]));
+        if (equ != -1)
+        {
+            ptr->var_name = ft_substr(env[i], 0, equ - 1);
+            ptr->var_content = ft_substr(env[i], equ + 1, ft_strlen(env[i]));
+        }
+        else if (equ == -1)
+        {
+             ptr->var_name = ft_strdup(env[i]);
+             ptr->var_content = ft_strdup("");
+        }
         if (env[++i] != NULL)
         {
             ptr->next = malloc(sizeof(t_env));
@@ -201,8 +207,6 @@ char    *dollar_treatment(char  **env, char *slice)
         }
         if (data->variable_content == NULL)
             data->variable_content = ft_strdup("");
-        if (strcmp(data->variable_name, "hello") == 0 || strcmp(data->variable_name, "world") == 0)
-            data->variable_content = ft_strdup("gotcha");
         slice = var_replacement(data, slice);
         free(data->variable_name);
         data->variable_name = NULL;
